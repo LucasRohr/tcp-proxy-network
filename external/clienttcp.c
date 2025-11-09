@@ -9,6 +9,8 @@
 
 #define ECHOMAX 81
 
+// IP VM para testes local: 192.168.0.172
+// IP Bare Metal para testes local: 192.168.0.145
 int main(int argc, char *argv[]) {
 
 	/* ESTACAO REMOTA */

@@ -6,6 +6,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+// IP VM para testes local: 192.168.0.226
 int main(int argc, char *argv[]) {
 
 	/* Variaveis Locais */
