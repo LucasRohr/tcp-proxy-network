@@ -3,12 +3,16 @@
 
 #include "proxy.h"
 
-/**
- * Coleta métricas TCP de um socket usando getsockopt(TCP_INFO)
- * @param socket O socket para monitorar
- * @param metrics A estrutura para preencher com os dados
- * @return 0 caso sucesso, -1 caso erro
- */
-int get_tcp_metrics(int socket, ConnectionMetrics *metrics);
+// Coleta métricas TCP de um socket
+int monitor_get_tcp_info(int sock_fd, ConnectionMetrics *metrics);
+
+// Inicializa os valores da estrutura de métricas
+void monitor_init_metrics(ConnectionMetrics *metrics);
+
+// Calcula o throughput e goodput com base nos bytes transferidos
+void monitor_calculate_throughput(ConnectionMetrics *metrics, unsigned long total_bytes_forwarded);
+
+// Retorna o timestamp atual em milissegundos
+unsigned long get_timestamp_ms();
 
 #endif
