@@ -1,5 +1,11 @@
 {
   "files.associations": {
-    "connection_handler.h": "c"
+    "connection_handler.h": "c",
+    "tcp_monitor.h": "c",
+    "proxy.h": "c",
+    "in.h": "c",
+    "unistd.h": "c",
+    "stdio.h": "c",
+    "logs.h": "c"
   }
 }
