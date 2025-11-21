@@ -9,9 +9,10 @@
 #include "../include/connection_handler.h"
 
 int main(int argc, char *argv[]) {
-    if (argc != 4) {
-        fprintf(stderr, "Uso: %s <porta_local> <host_servidor_real> <porta_servidor_real>\n", argv[0]);
-        fprintf(stderr, "Exemplo: %s 8080 192.168.1.100 9090\n", argv[0]);
+    if (argc < 4 || argc > 5) {
+        fprintf(stderr, "Uso: %s <porta_local> <host_servidor_real> <porta_servidor_real> [--optimize]\n", argv[0]);
+        fprintf(stderr, "Exemplo sem otimização: %s 8080 192.168.1.100 9090\n", argv[0]);
+        fprintf(stderr, "Exemplo com otimização: %s 8080 192.168.1.100 9090 --optimize\n", argv[0]);
         exit(EXIT_FAILURE);
     }
 
@@ -20,6 +21,18 @@ int main(int argc, char *argv[]) {
     config.listen_port = atoi(argv[1]);
     config.target_host = argv[2];
     config.target_port = atoi(argv[3]);
+
+    // Padrão: Otimização desligada
+    config.enable_optimization = 0;
+
+    // Verifica se o 5º argumento existe e se é a flag de otimização
+    if (argc == 5) {
+        if (strcmp(argv[4], "--optimize") == 0 || strcmp(argv[4], "-o") == 0) {
+            config.enable_optimization = 1;
+        } else {
+            fprintf(stderr, "Aviso: Argumento '%s' desconhecido. Use '--optimize' ou '-o' para ativar otimizações.\n", argv[4]);
+        }
+    }
 
     // 2. Cria o socket listener do proxy
     int listen_fd;
@@ -56,8 +69,16 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    printf("Proxy TCP escutando na porta %d, encaminhando para %s:%d\n",
+    printf("Proxy TCP escutando na porta %d, encaminhando para %s:%d\n\n",
            config.listen_port, config.target_host, config.target_port);
+
+    // Feedback visual
+    printf("----------------------------------------------------------------\n");
+    printf("Proxy TCP Iniciado\n");
+    printf("Escutando em: 192.168.0.145:%d\n", config.listen_port);
+    printf("Destino:      %s:%d\n", config.target_host, config.target_port);
+    printf("Otimização:   [%s]\n", config.enable_optimization ? "\033[1;32mATIVADA\033[0m" : "\033[1;33mDESATIVADA\033[0m");
+    printf("----------------------------------------------------------------\n");
 
     // 6. Loop principal: aceita e despacha conexões
     while (1) {

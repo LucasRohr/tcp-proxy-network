@@ -57,12 +57,12 @@ void display_metrics_text(ConnectionMetrics *metrics_client_proxy, ConnectionMet
     printf("----------------------------------------------------------------\n");
     printf("| Métrica          | Cliente -> Proxy   | Proxy -> Servidor |\n");
     printf("----------------------------------------------------------------\n");
-    printf("| RTT (ms)         | %-18.3f | %-17.3f |\n", metrics_client_proxy->rtt_ms, metrics_proxy_server->rtt_ms);
-    printf("| RTT Var (ms)     | %-18.3f | %-17.3f |\n", metrics_client_proxy->rtt_var_ms, metrics_proxy_server->rtt_var_ms);
-    printf("| Retransmissões   | %-18d | %-17d |\n", metrics_client_proxy->retransmits, metrics_proxy_server->retransmits);
-    printf("| CWND (segmentos) | %-18d | %-17d |\n", metrics_client_proxy->cwnd_segments, metrics_proxy_server->cwnd_segments);
-    printf("| Throughput (Mbps)   | %-18.3f | %-17.3f |\n", metrics_client_proxy->throughput_mbps, metrics_proxy_server->throughput_mbps);
-    printf("| Goodput (Mbps)   | %-18.3f | %-17.3f |\n", metrics_client_proxy->goodput_mbps, metrics_proxy_server->goodput_mbps);
+    printf("| RTT (ms)          | %-18.3f | %-17.3f |\n", metrics_client_proxy->rtt_ms, metrics_proxy_server->rtt_ms);
+    printf("| RTT Var (ms)      | %-18.3f | %-17.3f |\n", metrics_client_proxy->rtt_var_ms, metrics_proxy_server->rtt_var_ms);
+    printf("| Retransmissões    | %-18d | %-17d |\n", metrics_client_proxy->retransmits, metrics_proxy_server->retransmits);
+    printf("| CWND (segmentos)  | %-18d | %-17d |\n", metrics_client_proxy->cwnd_segments, metrics_proxy_server->cwnd_segments);
+    printf("| Throughput (Mbps) | %-18.3f | %-17.3f |\n", metrics_client_proxy->throughput_mbps, metrics_proxy_server->throughput_mbps);
+    printf("| Goodput (Mbps)    | %-18.3f | %-17.3f |\n", metrics_client_proxy->goodput_mbps, metrics_proxy_server->goodput_mbps);
     printf("----------------------------------------------------------------\n");
     printf("Log salvo em: logs/...\n");
 }

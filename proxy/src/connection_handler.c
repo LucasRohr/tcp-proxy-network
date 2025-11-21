@@ -11,9 +11,10 @@
 #include "../include/connection_handler.h"
 #include "../include/tcp_monitor.h"
 #include "../include/logs.h"
+#include "../include/tcp_optimizer.h"
 
-// Intervalo de monitoramento de 1 segundo
-#define MONITOR_INTERVAL_MS 1000
+// Intervalo de monitoramento (logs em texto)
+#define MONITOR_INTERVAL_MS 3000
 
 // Função auxiliar para encaminhar dados de um socket para outro (cliente <-> servidor)
 // Retorna o número de bytes lidos, 0 caso desconexão, -1 caso erro
@@ -112,7 +113,7 @@ void* handle_connection(void* args) {
 
     // 5. Loop de encaminhamento de dados e monitoramento
     while (1) {
-        // Espera pelo intervalo de monitoramento (1s) até que um dos sockets tenha dados
+        // Espera pelo intervalo de monitoramento até que um dos sockets tenha dados
         int poll_count = poll(poll_fd, 2, MONITOR_INTERVAL_MS);
 
         if (poll_count < 0) {
@@ -140,7 +141,8 @@ void* handle_connection(void* args) {
         unsigned long current_time = get_timestamp_ms();
 
         if (current_time - last_monitor_time >= MONITOR_INTERVAL_MS) {
-            
+            // 1. COLETA DE MÉTRICAS
+
             // Coleta métricas Cliente -> Proxy
             monitor_get_tcp_info(client_socket, &connection_pair.metrics_client_proxy);
             monitor_calculate_throughput(&connection_pair.metrics_client_proxy, bytes_client_to_server);
@@ -149,9 +151,49 @@ void* handle_connection(void* args) {
             monitor_get_tcp_info(server_socket, &connection_pair.metrics_proxy_server);
             monitor_calculate_throughput(&connection_pair.metrics_proxy_server, bytes_server_to_client);
 
+            // 2. EXIBIÇÃO E LOG
+
             // Exibe no terminal e loga no CSV
             display_metrics_text(&connection_pair.metrics_client_proxy, &connection_pair.metrics_proxy_server);
             log_metrics_csv(connection_pair.log_file, &connection_pair.metrics_client_proxy, &connection_pair.metrics_proxy_server);
+
+            // 3. APLICAÇÃO DE POLÍTICAS DE OTIMIZAÇÃO CONDICIONAL
+            // Ativada de acordo com flag
+            if (config->enable_optimization) {
+                // Cálculo do BDP (Bandwidth-Delay Product) para a conexão Proxy <-> Servidor
+                // BDP = Banda (bytes/s) * RTT (s)
+                
+                double throughput_bytes_sec = (connection_pair.metrics_proxy_server.throughput_mbps * 1000000.0) / 8.0;
+                double rtt_sec = connection_pair.metrics_proxy_server.rtt_ms / 1000.0;
+                
+                if (throughput_bytes_sec > 0 && rtt_sec > 0) {
+                    int bdp = (int)(throughput_bytes_sec * rtt_sec);
+                    
+                    // Buffer Tuning: Define o buffer como 2x o BDP para garantir fluxo contínuo, limitado para evitar bufferbloat
+                    // Limitado a um mínimo de 64 KB
+                    int optimal_buffer = bdp * 2;
+                    if (optimal_buffer < 65535) optimal_buffer = 65535; 
+
+                    // Aplica no socket que vai para o servidor
+                    apply_buffer_tuning(server_socket, optimal_buffer, optimal_buffer);
+                    
+                    // Log
+                    printf("[Otimização] BDP Calculado: %d bytes | Novo Buffer: %d bytes\n", bdp, optimal_buffer);
+                }
+
+                // TCP Pacing:
+                // Se detectar que o RTT está muito alto (ex: > 100ms), limita a taxa para tentar descongestionar a rede
+                if (connection_pair.metrics_proxy_server.rtt_ms > 100.0) {
+                    // Limita a 1 MB/s (valor arbitrário para teste)
+                    long pacing_rate = 1024 * 1024; 
+                    apply_tcp_pacing(server_socket, pacing_rate);
+
+                    printf("[Otimização] RTT Alto (%.2fms). Pacing ativado: 1MB/s\n", connection_pair.metrics_proxy_server.rtt_ms);
+                } else {
+                    // Remove o pacing (define como 0 ou valor máximo)
+                    apply_tcp_pacing(server_socket, ~0UL); 
+                }
+            }
 
             last_monitor_time = current_time;
         }

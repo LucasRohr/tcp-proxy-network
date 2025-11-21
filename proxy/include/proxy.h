@@ -9,6 +9,7 @@ typedef struct {
     int listen_port;       // Porta onde o proxy escuta
     char *target_host;     // IP do servidor
     int target_port;       // Porta do servidor
+    int enable_optimization; // 0 = Desativado, 1 = Ativado
 } ProxyConfig;
 
 // Estrutura para registrar as métricas de uma conexão

@@ -13,7 +13,8 @@ TARGET = proxy_app
 
 # Arquivos fonte
 SRCS = $(SRC_DIR)/main.c $(SRC_DIR)/connection_handler.c \
-       $(SRC_DIR)/tcp_monitor.c $(SRC_DIR)/logs.c
+       $(SRC_DIR)/tcp_monitor.c $(SRC_DIR)/logs.c \
+       $(SRC_DIR)/tcp_optimizer.c
 
 # Arquivos objeto (calculados a partir dos fontes)
 OBJS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRCS))
