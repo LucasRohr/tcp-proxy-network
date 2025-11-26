@@ -163,7 +163,7 @@ void* handle_connection(void* args) {
                 // Cálculo do BDP (Bandwidth-Delay Product) para a conexão Proxy <-> Servidor
                 // BDP = Banda (bytes/s) * RTT (s)
                 
-                double throughput_bytes_sec = (connection_pair.metrics_proxy_server.throughput_mbps * 1000000.0) / 8.0;
+                double throughput_bytes_sec = (connection_pair.metrics_proxy_server.throughput_kbps * 1000.0) / 8.0;
                 double rtt_sec = connection_pair.metrics_proxy_server.rtt_ms / 1000.0;
                 
                 if (throughput_bytes_sec > 0 && rtt_sec > 0) {

@@ -30,9 +30,9 @@ def plot_metrics(csv_file):
     color_c2p = 'green'  # Client -> Proxy
 
     # --- Gráfico 1: Throughput (Goodput) ---
-    axes[0].plot(df['TimeSec'], df['P2S_Goodput_Mbps'], label='Proxy -> Server', color=color_p2s, linewidth=2)
-    axes[0].plot(df['TimeSec'], df['C2P_Goodput_Mbps'], label='Client -> Proxy', color=color_c2p, linestyle='--', alpha=0.7)
-    axes[0].set_ylabel('Goodput (Mbps)')
+    axes[0].plot(df['TimeSec'], df['P2S_Goodput_kbps'], label='Proxy -> Server', color=color_p2s, linewidth=2)
+    axes[0].plot(df['TimeSec'], df['C2P_Goodput_kbps'], label='Client -> Proxy', color=color_c2p, linestyle='--', alpha=0.7)
+    axes[0].set_ylabel('Goodput (kbps)')
     axes[0].set_title('1. Throughput / Goodput da Conexão')
     axes[0].grid(True, which='both', linestyle='--', alpha=0.7)
     axes[0].legend()

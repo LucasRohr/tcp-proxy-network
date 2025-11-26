@@ -24,8 +24,8 @@ typedef struct {
     int ssthresh;              // Limiar de ssthresh
 
     // Métricas calculadas
-    double throughput_mbps;    // Throughput (bytes/tempo)
-    double goodput_mbps;       // Goodput (dados úteis/tempo)
+    double throughput_kbps;    // Throughput (bytes/tempo)
+    double goodput_kbps;       // Goodput (dados úteis/tempo)
 
     // Campos auxiliares de cálculo
     unsigned long bytes_transferred_total;

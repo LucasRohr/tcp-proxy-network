@@ -73,14 +73,14 @@ void monitor_calculate_throughput(ConnectionMetrics *metrics, unsigned long tota
     metrics->bytes_transferred_total = total_bytes_forwarded;
     unsigned long bytes_this_interval = metrics->bytes_transferred_total - metrics->last_bytes_total;
 
-    // Calcula Mbps: (bytes * 8 bits/byte) / (intervalo_em_ms / 1000 s/ms) / 1.000.000 bits/Mbit
+    // Calcula Kbps: (bytes * 8 bits/byte) / (intervalo_em_ms / 1000 s/ms) / 1.000.000 bits/Mbit
     double interval_sec = (double)interval_ms / 1000.0;
     double bits_per_sec = (double)(bytes_this_interval * 8) / interval_sec;
-    double mbps = bits_per_sec / 1000000.0;
+    double kbps = bits_per_sec / 1000.0;
 
     // No proxy, os bytes encaminhados são o "goodput" (payload)
-    metrics->throughput_mbps = mbps;
-    metrics->goodput_mbps = mbps;
+    metrics->throughput_kbps = kbps;
+    metrics->goodput_kbps = kbps;
 
     // Atualiza valores para o próximo cálculo
     metrics->last_bytes_total = metrics->bytes_transferred_total;

@@ -22,8 +22,8 @@ FILE* open_log_file(const char* client_ip) {
 
     // Escreve o cabeçalho do CSV
     fprintf(log_file, "TimestampMS,");
-    fprintf(log_file, "C2P_RTT_ms, C2P_RTTVAR_ms, C2P_Retrans, C2P_CWND, C2P_SSTHRESH, C2P_Goodput_Mbps,");
-    fprintf(log_file, "P2S_RTT_ms, P2S_RTTVAR_ms, P2S_Retrans, P2S_CWND, P2S_SSTHRESH, P2S_Goodput_Mbps\n");
+    fprintf(log_file, "C2P_RTT_ms, C2P_RTTVAR_ms, C2P_Retrans, C2P_CWND, C2P_SSTHRESH, C2P_Throughput_kbps, C2P_Goodput_kbps,");
+    fprintf(log_file, "P2S_RTT_ms, P2S_RTTVAR_ms, P2S_Retrans, P2S_CWND, P2S_SSTHRESH, P2S_Throughput_kbps, P2S_Goodput_kbps\n");
     
     fflush(log_file); // Garante que o cabeçalho seja escrito
 
@@ -36,14 +36,14 @@ void log_metrics_csv(FILE *log_file, ConnectionMetrics *metrics_client_proxy, Co
     fprintf(log_file, "%lu,", metrics_client_proxy->timestamp_ms); // Escreve timestamp
 
     // Escreve métricas da conexão Cliente <-> Proxy
-    fprintf(log_file, "%.3f,%.3f,%d,%d,%d,%.3f,",
+    fprintf(log_file, "%.3f,%.3f,%d,%d,%d,%.3f,%.3f,",
             metrics_client_proxy->rtt_ms, metrics_client_proxy->rtt_var_ms, metrics_client_proxy->retransmits,
-            metrics_client_proxy->cwnd_segments, metrics_client_proxy->ssthresh, metrics_client_proxy->goodput_mbps);
+            metrics_client_proxy->cwnd_segments, metrics_client_proxy->ssthresh, metrics_client_proxy->throughput_kbps, metrics_client_proxy->goodput_kbps);
     
     // Escreve métricas da conexão Proxy <-> Servidor
-    fprintf(log_file, "%.3f,%.3f,%d,%d,%d,%.3f\n",
+    fprintf(log_file, "%.3f,%.3f,%d,%d,%d,%.3f,%.3f\n",
             metrics_proxy_server->rtt_ms, metrics_proxy_server->rtt_var_ms, metrics_proxy_server->retransmits,
-            metrics_proxy_server->cwnd_segments, metrics_proxy_server->ssthresh, metrics_proxy_server->goodput_mbps);
+            metrics_proxy_server->cwnd_segments, metrics_proxy_server->ssthresh, metrics_proxy_server->throughput_kbps, metrics_proxy_server->goodput_kbps);
             
     fflush(log_file); // Garante que os dados sejam escritos
 }
@@ -62,8 +62,8 @@ void display_metrics_text(ConnectionMetrics *metrics_client_proxy, ConnectionMet
     printf("| Retransmissões        | %-18d | %-17d |\n", metrics_client_proxy->retransmits, metrics_proxy_server->retransmits);
     printf("| CWND (segmentos)      | %-18d | %-17d |\n", metrics_client_proxy->cwnd_segments, metrics_proxy_server->cwnd_segments);
     printf("| ssthresh (threshold)  | %-18d | %-17d |\n", metrics_client_proxy->ssthresh, metrics_proxy_server->ssthresh);
-    printf("| Throughput (Mbps)     | %-18.3f | %-17.3f |\n", metrics_client_proxy->throughput_mbps, metrics_proxy_server->throughput_mbps);
-    printf("| Goodput (Mbps)        | %-18.3f | %-17.3f |\n", metrics_client_proxy->goodput_mbps, metrics_proxy_server->goodput_mbps);
+    printf("| Throughput (Kbps)     | %-18.3f | %-17.3f |\n", metrics_client_proxy->throughput_kbps, metrics_proxy_server->throughput_kbps);
+    printf("| Goodput (Kbps)        | %-18.3f | %-17.3f |\n", metrics_client_proxy->goodput_kbps, metrics_proxy_server->goodput_kbps);
     printf("----------------------------------------------------------------\n");
     printf("Log salvo em: logs/...\n\n");
 }
