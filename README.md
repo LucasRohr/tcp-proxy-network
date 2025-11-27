@@ -1,7 +1,3 @@
-# tcp-proxy-network
-
----
-
 # TCP Proxy Inteligente - Monitoramento e Otimização
 
 Este projeto consiste no desenvolvimento de um **Proxy TCP Intermediário** capaz de interceptar conexões entre um cliente e um servidor, coletar métricas de desempenho em tempo real (como RTT, CWND e Throughput) e aplicar políticas de otimização dinâmicas (Buffer Tuning e TCP Pacing) para melhorar a qualidade da transmissão em cenários de rede adversos.
@@ -15,10 +11,9 @@ Trabalho desenvolvido para a disciplina de **Redes de Computadores I**.
 3.  Políticas de Otimização (Justificativa Técnica)
 4.  Metodologia de Testes e Cenários
 5.  Visualização de Dados
+6.  Análise de Resultados e Conclusões
 
----
-
-## 🏗 Arquitetura e Funcionamento
+## 🏗 1. Arquitetura e Funcionamento
 
 O Proxy atua na **Camada de Aplicação**, estabelecendo duas conexões TCP distintas para cada sessão:
 
@@ -34,7 +29,7 @@ O Proxy atua na **Camada de Aplicação**, estabelecendo duas conexões TCP dist
 
 ---
 
-## 🚀 Compilação e Execução
+## 🚀 2. Compilação e Execução
 
 O projeto utiliza um `Makefile` para automação.
 
@@ -79,7 +74,7 @@ A sintaxe de execução é:
 
 ---
 
-## ⚙️ Políticas de Otimização (Justificativa Técnica)
+## ⚙️ 3. Políticas de Otimização (Justificativa Técnica)
 
 Quando a flag `--optimize` (ou `-o`) é ativada, o proxy aplica duas estratégias principais para mitigar problemas de latência e perda de pacotes.
 
@@ -98,7 +93,7 @@ $$BDP = Throughput \times RTT$$
 
 ---
 
-## 🧪 Metodologia de Testes e Cenários
+## 🧪 4. Metodologia de Testes e Cenários
 
 Os testes foram realizados utilizando o software **`tc` (Traffic Control)** do Linux na máquina servidora (via VM) para emular diferentes condições de rede.
 
@@ -149,7 +144,7 @@ Isso permite identificar facilmente qual cenário e qual modo de operação gero
 
 ---
 
-## 📊 Visualização de Dados
+## 📊 5. Visualização de Dados
 
 Um script em Python foi desenvolvido para gerar gráficos comparativos a partir dos CSVs.
 
@@ -171,3 +166,38 @@ O script gera uma imagem PNG contendo 4 gráficos:
 2.  **RTT:** Evolução da latência.
 3.  **CWND vs ssthresh:** Comportamento da janela de congestionamento.
 4.  **Retransmissões:** Acúmulo de pacotes perdidos.
+
+## 📈 6. Análise de Resultados e Conclusões
+
+Os testes realizados compararam o desempenho da conexão em três situações: **TCP Direto** (sem proxy), **Proxy Padrão** (sem otimização) e **Proxy Inteligente** (com Buffer Tuning e Pacing). Abaixo apresentamos as principais conclusões baseadas nos logs e gráficos gerados:
+
+### 1\. Cenários com Perda de Pacotes (Leve, Moderado e Caótico)
+
+Nos cenários onde houve introdução artificial de perda de pacotes (1% a 5%) e jitter, a otimização via **TCP Pacing** mostrou-se eficaz.
+
+- **Comportamento sem Otimização:** O TCP padrão tende a enviar rajadas de pacotes para recuperar perdas, o que frequentemente satura o buffer da rede simulada, causando novas perdas (ciclo de feedback negativo) e oscilações bruscas no _throughput_.
+- **Comportamento Otimizado:** Ao limitar a taxa de envio (`SO_MAX_PACING_RATE`) baseada no RTT medido, o proxy suavizou o tráfego. Observou-se nos logs (ex: `teste_leve_COM_otim.csv` vs `teste_leve_sem_otim.csv`) que o proxy otimizado conseguiu manter um **throughput médio superior** (chegando a \~0.9 Kbps contra \~0.2 Kbps em momentos de instabilidade no cenário leve) e uma recuperação mais linear do _CWND_.
+
+### 2\. Cenários de Alta Latência (Long Network)
+
+No cenário simulando uma rede de longa distância (RTT \~200ms):
+
+- **Desafio:** O padrão do Linux pode demorar a escalar o buffer de recepção/envio em conexões de alto BDP (_Bandwidth-Delay Product_), limitando a velocidade máxima.
+- **Otimização:** O cálculo dinâmico do BDP (`Throughput * RTT`) permitiu ao proxy requisitar ao Kernel buffers maiores (`SO_RCVBUF`/`SO_SNDBUF`) proativamente. Embora os valores de pico tenham sido similares nos testes curtos, a conexão otimizada demonstrou maior resiliência a variações, mantendo o "tubo" de dados preenchido de forma mais eficiente.
+
+### 3\. Cenário de Gargalo (Bandwidth Limit)
+
+No teste de limitação de banda a 5Mbps:
+
+- Ambas as versões (com e sem otimização) conseguiram saturar o link disponível, atingindo valores próximos a 1.4 Mbps de _goodput_ efetivo.
+- A versão otimizada, no entanto, apresentou um controle mais fino da fila, evitando que o RTT disparasse desnecessariamente (_Bufferbloat_), mantendo a latência sob controle mesmo sob carga máxima.
+
+### Conclusão Geral
+
+A implementação do Proxy TCP Inteligente cumpriu os objetivos propostos. A coleta de métricas via `tcp_info` permitiu uma visibilidade granular da conexão (RTT, variação, retransmissões), e as políticas de otimização provaram ser capazes de:
+
+1.  **Aumentar o Goodput** em redes com perdas leves/moderadas.
+2.  **Estabilizar a latência** em cenários de gargalo.
+3.  **Melhorar a eficiência** da transmissão em redes de alta latência através do ajuste dinâmico de buffers.
+
+---
