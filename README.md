@@ -13,6 +13,7 @@ Trabalho desenvolvido para a disciplina de **Redes de Computadores I**.
 5.  Visualização de Dados
 6.  Análise de Resultados e Conclusões
 7.  Evidências de Testes e Gráficos
+8.  Vídeo de Demonstração
 
 ## 🏗 1. Arquitetura e Funcionamento
 
@@ -270,5 +271,15 @@ Gráficos gerados a partir dos logs CSV, ilustrando Throughput, RTT, CWND e Retr
 | **4. Gargalo de Banda** |  [Ver Gráfico](logs/teste_gargalo_sem_otim.png)   |  [Ver Gráfico](logs/teste_gargalo_COM_otim.png)   |
 | **5. Long Network**     |    [Ver Gráfico](logs/teste_long_sem_otim.png)    |    [Ver Gráfico](logs/teste_long_COM_otim.png)    |
 | **6. Rede Caótica**     |  [Ver Gráfico](logs/teste_caotica_sem_otim.png)   |  [Ver Gráfico](logs/teste_caotica_COM_otim.png)   |
+
+---
+
+## 🎥 8. Vídeo de Demonstração
+
+Demonstração prática do funcionamento do Proxy TCP, incluindo a execução dos testes e a análise dos resultados em tempo real.
+
+[![Assista ao Vídeo de Demonstração](https://img.youtube.com/vi/B_9-qWkNdEs/0.jpg)](https://youtu.be/B_9-qWkNdEs)
+
+> **Nota:** Clique na imagem acima para ser redirecionado ao YouTube.
 
 ---
