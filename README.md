@@ -12,6 +12,7 @@ Trabalho desenvolvido para a disciplina de **Redes de Computadores I**.
 4.  Metodologia de Testes e Cenários
 5.  Visualização de Dados
 6.  Análise de Resultados e Conclusões
+7.  Evidências de Testes e Gráficos
 
 ## 🏗 1. Arquitetura e Funcionamento
 
@@ -199,5 +200,75 @@ A implementação do Proxy TCP Inteligente cumpriu os objetivos propostos. A col
 1.  **Aumentar o Goodput** em redes com perdas leves/moderadas.
 2.  **Estabilizar a latência** em cenários de gargalo.
 3.  **Melhorar a eficiência** da transmissão em redes de alta latência através do ajuste dinâmico de buffers.
+
+Com certeza\! Abaixo está a nova seção **"8. Evidências de Testes e Gráficos"** formatada para ser adicionada ao seu `README.md`.
+
+Esta seção organiza os arquivos de evidência em duas categorias:
+
+1.  **Screenshots dos Terminais:** Mostrando a execução em tempo real (Cliente e Proxy).
+2.  **Gráficos de Desempenho:** Gerados a partir dos logs CSV.
+
+Copie e cole o conteúdo abaixo no final do seu arquivo `README.md`.
+
+---
+
+## 📸 7. Evidências de Testes e Gráficos
+
+Esta seção contém links para as capturas de tela da execução dos testes e os gráficos de desempenho gerados.
+
+### 7.1. Screenshots de Execução (Terminais)
+
+Abaixo estão as evidências da execução dos testes nas máquinas virtuais, organizadas por cenário.
+
+**Cenário 1: Rede Ideal (Baseline)**
+
+- **Cliente (Sem Proxy):** [Execução Cliente - Ideal](logs/without_proxy_tests/testes_sem_proxy_prints/Ideal_cliente.png)
+- **Proxy (Sem Otimização):** [Início](logs/testes_com_proxy_prints/ideal/ideal_SO_1.png) | [Métricas](logs/testes_com_proxy_prints/ideal/ideal_SO_2.png)
+- **Proxy (Com Otimização):** [Início](logs/testes_com_proxy_prints/ideal/ideal_CO_1.png) | [Métricas](logs/testes_com_proxy_prints/ideal/ideal_CO_2.png)
+
+**Cenário 2: Perda Leve (50ms delay, 1% loss)**
+
+- **Cliente (Sem Proxy):** [Execução Cliente - Leve](logs/without_proxy_tests/testes_sem_proxy_prints/cenario_leve_cliente.png)
+- **Proxy (Sem Otimização):** [Início](logs/testes_com_proxy_prints/leve/leve_SO_1.png) | [Métricas](logs/testes_com_proxy_prints/leve/leve_SO_2.png)
+- **Proxy (Com Otimização):** [Início](logs/testes_com_proxy_prints/leve/leve_CO_1.png) | [Métricas](logs/testes_com_proxy_prints/leve/leve_CO_2.png)
+
+**Cenário 3: Perda Moderada (100ms delay, 2% loss)**
+
+- **Cliente (Sem Proxy):** [Execução Cliente - Moderado](logs/without_proxy_tests/testes_sem_proxy_prints/cenario_moderado_cliente.png)
+- **Proxy (Sem Otimização):** [Início](logs/testes_com_proxy_prints/moderado/moderado_SO_1.png) | [Métricas](logs/testes_com_proxy_prints/moderado/moderado_SO_2.png)
+- **Proxy (Com Otimização):** [Início](logs/testes_com_proxy_prints/moderado/moderado_CO_1.png) | [Métricas](logs/testes_com_proxy_prints/moderado/moderado_CO_2.png)
+
+**Cenário 4: Gargalo de Banda (5Mbps)**
+
+- **Cliente (Sem Proxy):** [Execução Cliente - Gargalo](logs/without_proxy_tests/testes_sem_proxy_prints/gargalo_banda_cliente.png)
+- **Proxy (Sem Otimização):** [Início](logs/testes_com_proxy_prints/gargalo/gargalo_SO_1.png) | [Métricas](logs/testes_com_proxy_prints/gargalo/gargalo_SO_2.png)
+- **Proxy (Com Otimização):** [Início](logs/testes_com_proxy_prints/gargalo/gargalo_CO_1.png) | [Métricas](logs/testes_com_proxy_prints/gargalo/gargalo_CO_2.png)
+
+**Cenário 5: Long Network (Alta Latência, Sem Perda)**
+
+- **Cliente (Sem Proxy):** [Execução Cliente - Long Network](logs/without_proxy_tests/testes_sem_proxy_prints/long_network_cliente.png)
+- **Proxy (Sem Otimização):** [Início](logs/testes_com_proxy_prints/long/long_SO_1.png) | [Métricas](logs/testes_com_proxy_prints/long/long_SO_2.png)
+- **Proxy (Com Otimização):** [Início](logs/testes_com_proxy_prints/long/long_CO_1.png) | [Métricas](logs/testes_com_proxy_prints/long/long_CO_2.png)
+
+**Cenário 6: Rede Caótica (Jitter + Alta Perda)**
+
+- **Cliente (Sem Proxy):** [Execução Cliente - Caótica](logs/without_proxy_tests/testes_sem_proxy_prints/caotica_cliente.png)
+- **Proxy (Sem Otimização):** [Início](logs/testes_com_proxy_prints/caotica/caotica_SO_1.png) | [Métricas](logs/testes_com_proxy_prints/caotica/caotica_SO_2.png)
+- **Proxy (Com Otimização):** [Início](logs/testes_com_proxy_prints/caotica/caotica_CO_1.png) | [Métricas](logs/testes_com_proxy_prints/caotica/caotica_CO_2.png)
+
+---
+
+### 7.2. Gráficos Comparativos de Desempenho
+
+Gráficos gerados a partir dos logs CSV, ilustrando Throughput, RTT, CWND e Retransmissões.
+
+| Cenário                 |                  Sem Otimização                   |                  Com Otimização                   |
+| :---------------------- | :-----------------------------------------------: | :-----------------------------------------------: |
+| **1. Rede Ideal**       | [Ver Gráfico](logs/teste_rede_ideal_sem_otim.png) | [Ver Gráfico](logs/teste_rede_ideal_COM_otim.png) |
+| **2. Perda Leve**       |    [Ver Gráfico](logs/teste_leve_sem_otim.png)    |    [Ver Gráfico](logs/teste_leve_COM_otim.png)    |
+| **3. Perda Moderada**   |  [Ver Gráfico](logs/teste_moderado_sem_otim.png)  |  [Ver Gráfico](logs/teste_moderado_COM_otim.png)  |
+| **4. Gargalo de Banda** |  [Ver Gráfico](logs/teste_gargalo_sem_otim.png)   |  [Ver Gráfico](logs/teste_gargalo_COM_otim.png)   |
+| **5. Long Network**     |    [Ver Gráfico](logs/teste_long_sem_otim.png)    |    [Ver Gráfico](logs/teste_long_COM_otim.png)    |
+| **6. Rede Caótica**     |  [Ver Gráfico](logs/teste_caotica_sem_otim.png)   |  [Ver Gráfico](logs/teste_caotica_COM_otim.png)   |
 
 ---
