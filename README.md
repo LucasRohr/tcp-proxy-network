@@ -173,21 +173,29 @@ O script gera uma imagem PNG contendo 4 gráficos:
 
 Os testes realizados compararam o desempenho da conexão em três situações: **TCP Direto** (sem proxy), **Proxy Padrão** (sem otimização) e **Proxy Inteligente** (com Buffer Tuning e Pacing). Abaixo apresentamos as principais conclusões baseadas nos logs e gráficos gerados:
 
-### 1\. Cenários com Perda de Pacotes (Leve, Moderado e Caótico)
+### 1. Análise do Baseline (Conexão Direta)
+
+Os testes realizados sem uso do proxy (conexão direta Cliente → Servidor) serviram como base para validar o impacto das restrições de rede impostas pelo `tc`.
+
+- **Latência Pura:** A conexão direta apresentou os menores tempos de resposta (RTT), pois não há o _overhead_ de processamento da camada de aplicação (copiar dados do _kernel space_ para _user space_ e vice-versa) que ocorre no proxy.
+- **Sensibilidade à Perda:** Nos cenários "Leve" e "Moderado" (ver evidências em `cenario leve cliente.png` e `cenario moderado cliente.png`), observou-se que a conexão direta expõe o cliente imediatamente a qualquer instabilidade. O TCP padrão do Linux (CUBIC) reduz a janela de congestionamento (CWND) rapidamente ao detectar perdas, o que é o comportamento esperado de segurança, mas que resulta em quedas momentâneas de vazão.
+- **Limite Físico:** No cenário "Gargalo de Banda" (5Mbps), a conexão direta atingiu o limite teórico imposto. Isso confirmou que o ambiente de testes estava configurado corretamente, servindo de teto máximo de desempenho para comparar com o Proxy.
+
+### 2\. Cenários com Perda de Pacotes (Leve, Moderado e Caótico)
 
 Nos cenários onde houve introdução artificial de perda de pacotes (1% a 5%) e jitter, a otimização via **TCP Pacing** mostrou-se eficaz.
 
 - **Comportamento sem Otimização:** O TCP padrão tende a enviar rajadas de pacotes para recuperar perdas, o que frequentemente satura o buffer da rede simulada, causando novas perdas (ciclo de feedback negativo) e oscilações bruscas no _throughput_.
 - **Comportamento Otimizado:** Ao limitar a taxa de envio (`SO_MAX_PACING_RATE`) baseada no RTT medido, o proxy suavizou o tráfego. Observou-se nos logs (ex: `teste_leve_COM_otim.csv` vs `teste_leve_sem_otim.csv`) que o proxy otimizado conseguiu manter um **throughput médio superior** (chegando a \~0.9 Kbps contra \~0.2 Kbps em momentos de instabilidade no cenário leve) e uma recuperação mais linear do _CWND_.
 
-### 2\. Cenários de Alta Latência (Long Network)
+### 3\. Cenários de Alta Latência (Long Network)
 
 No cenário simulando uma rede de longa distância (RTT \~200ms):
 
 - **Desafio:** O padrão do Linux pode demorar a escalar o buffer de recepção/envio em conexões de alto BDP (_Bandwidth-Delay Product_), limitando a velocidade máxima.
 - **Otimização:** O cálculo dinâmico do BDP (`Throughput * RTT`) permitiu ao proxy requisitar ao Kernel buffers maiores (`SO_RCVBUF`/`SO_SNDBUF`) proativamente. Embora os valores de pico tenham sido similares nos testes curtos, a conexão otimizada demonstrou maior resiliência a variações, mantendo o "tubo" de dados preenchido de forma mais eficiente.
 
-### 3\. Cenário de Gargalo (Bandwidth Limit)
+### 4\. Cenário de Gargalo (Bandwidth Limit)
 
 No teste de limitação de banda a 5Mbps:
 
@@ -201,17 +209,6 @@ A implementação do Proxy TCP Inteligente cumpriu os objetivos propostos. A col
 1.  **Aumentar o Goodput** em redes com perdas leves/moderadas.
 2.  **Estabilizar a latência** em cenários de gargalo.
 3.  **Melhorar a eficiência** da transmissão em redes de alta latência através do ajuste dinâmico de buffers.
-
-Com certeza\! Abaixo está a nova seção **"8. Evidências de Testes e Gráficos"** formatada para ser adicionada ao seu `README.md`.
-
-Esta seção organiza os arquivos de evidência em duas categorias:
-
-1.  **Screenshots dos Terminais:** Mostrando a execução em tempo real (Cliente e Proxy).
-2.  **Gráficos de Desempenho:** Gerados a partir dos logs CSV.
-
-Copie e cole o conteúdo abaixo no final do seu arquivo `README.md`.
-
----
 
 ## 📸 7. Evidências de Testes e Gráficos
 
